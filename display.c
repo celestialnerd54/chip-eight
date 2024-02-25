@@ -23,7 +23,7 @@ void updateDisplay() {
     system("clear");
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            printf(display[y][x] ? "+ " : "  ");
+            printf(display[y][x] ? "# " : "  ");
         }
         printf("\n");
     }

@@ -11,4 +11,4 @@ extern uint8_t vf;
 
 bool rom_load(const char *filename);
 uint16_t opcode();
-void cycle();
+void cycle(char *romfile);

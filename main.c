@@ -2,7 +2,7 @@
 #include "display.h"
 
 
-int main(void) {
-    cycle();
+int main(int argc, char** argv) {
+    cycle(argv[argc-1]);
     return 0;
 }

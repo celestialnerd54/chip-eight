@@ -33,8 +33,8 @@ u16 opcode() {
 
 void execute(u16 opcode);
 
-void cycle() {
-    rom_load("ibm.ch8");
+void cycle(char *romfile) {
+    rom_load(romfile);
     while (1) {
         execute(opcode());
         pc += 2;
@@ -54,11 +54,42 @@ void execute(u16 opcode) {
         case 0x0000:
             if (opcode == 0x00e0) {
                 clearDisplay();
+            } else if (opcode == 0x00ee) {
+                pc = popS();
             }
             break;
 
         case 0x1000:
             pc = nnn - 2;
+            break;
+
+        case 0x2000:
+            pushS(pc);
+            pc = nnn;
+            break;
+
+        case 0x3000:
+            if (V[x] == nn) {
+                pc += 2;
+            }
+            break;
+
+        case 0x4000:
+            if (V[x] != nn) {
+                pc += 2;
+            }
+            break;
+
+        case 0x5000:
+            if (V[x] == V[y]) {
+                pc += 2;
+            }
+            break;
+
+        case 0x9000:
+            if (V[x] != V[y]) {
+                pc += 2;
+            }
             break;
 
         case 0x6000:
@@ -69,9 +100,48 @@ void execute(u16 opcode) {
             V[x] += nn;
             break;
 
+        case 0x8000:
+            switch (n) {
+                case 0:
+                    V[x] = V[y];
+                    break;
+                case 1:
+                    V[x] |= V[y];
+                    break;
+                case 2:
+                    V[x] &= V[y];
+                    break;
+                case 3:
+                    V[x] ^= V[y];
+                    break;
+                case 4:
+                    V[x] += V[y];
+                    break;
+                case 5:
+                    V[x] -= V[y];
+                    break;
+                case 7:
+                    V[x] = V[y] - V[x];
+                    break;
+                case 6:
+                    V[x] = V[y];
+                    V[0xf] = V[x] & 0x01;
+                    V[x] >>= 1;
+                    break;
+                case 0xe:
+                    V[x] = V[y];
+                    V[0xf] = (V[x] & 0x80) >> 7;
+                    V[x] <<= 1;
+                    break;
+            }
+            break;
+
         case 0xA000:
             I = nnn;
             break;
+
+        case 0xB000:
+            pc = nnn + V[x];
 
         case 0xd000:
             V[0xf] = 0;
